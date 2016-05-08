@@ -212,11 +212,17 @@ module OFX
           return requestDocument
         end
 
-        def get_account_id
+        def get_account_id(account_id=nil)
             req = create_request_document_signup
             return nil if req.nil?
             resp = send(req)
-            id = resp.message_sets[1].responses[0].account_identifier if resp
+            if not resp
+                id = nil
+            elsif account_id
+                id = resp.message_sets[1].responses[0].accounts[account_id].account_information.account.account_identifier
+            else
+                id = resp.message_sets[1].responses[0].account_identifier
+            end
             return id
         end
 
